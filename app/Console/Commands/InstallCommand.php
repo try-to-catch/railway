@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 
 class InstallCommand extends Command
 {
@@ -28,24 +27,9 @@ class InstallCommand extends Command
     {
         $this->info('Installing the application...');
 
-        $envExamplePath = base_path('.env.example');
-        $envPath = base_path('.env');
-
-        if (File::exists($envPath)) {
-            return $this->error('.env file already exists.') && self::FAILURE;
-        }
-
-        if (!File::exists($envExamplePath)) {
-            return $this->error('.env.example file is missing.') && self::FAILURE;
-        }
-
-        File::copy($envExamplePath, $envPath);
-
-        $this->call('./vendor/bin/sail', ['up', '-d']);
-        $this->call('migrate');
-
         $this->call('key:generate');
         $this->call('storage:link');
+        $this->call('migrate');
 
         $this->info('Application installed successfully.');
 
