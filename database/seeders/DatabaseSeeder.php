@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Train::factory(3)->has(
-            Carriage::factory(3)->has(
-                Seat::factory(3)
+        Train::factory(10)->has(
+            Carriage::factory(5)->has(
+                Seat::factory(20)
             )
         )->create();
     }
