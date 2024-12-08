@@ -30,6 +30,20 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <NavLink
+                                    href={route('trains.index')}
+                                    active={route().current().startsWith('trains')}
+                                >
+                                    Trains
+                                </NavLink>
+
+                                <NavLink
+                                    href={route('seats.index')}
+                                    active={route().current().startsWith('carriages.seats') || route().current('seats.index')}
+                                >
+                                    Seats
+                                </NavLink>
                             </div>
                         </div>
 
