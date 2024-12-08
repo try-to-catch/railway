@@ -10,13 +10,13 @@ class StoreCarriageRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'number' => ['required', 'string','max:255'],
-            'class' => ['required', 'string','max:255'],
+            'number' => ['required', 'string', 'max:255'],
+            'class' => ['required', 'string', 'max:255'],
         ];
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/', static function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -17,7 +17,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', static function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::controller( SeatController::class)->group(
+Route::controller(SeatController::class)->group(
     function () {
         Route::get('/carriages/{carriage}/seats', [SeatController::class, 'index'])->name('carriages.seats.index');
         Route::get('/carriages/{carriage}/seats/create', [SeatController::class, 'create'])->name('carriages.seats.create');
@@ -41,7 +41,7 @@ Route::controller( SeatController::class)->group(
     }
 );
 
-Route::controller( CarriageController::class)->group(
+Route::controller(CarriageController::class)->group(
     function () {
         Route::get('/trains/{train}/carriages', [CarriageController::class, 'index'])->name('trains.carriages.index');
         Route::get('/trains/{train}/carriages/create', [CarriageController::class, 'create'])->name('trains.carriages.create');
@@ -53,7 +53,7 @@ Route::controller( CarriageController::class)->group(
     }
 );
 
-Route::controller( TrainController::class)->group(
+Route::controller(TrainController::class)->group(
     function () {
         Route::get('/trains', [TrainController::class, 'index'])->name('trains.index');
         Route::post('/trains', [TrainController::class, 'store'])->name('trains.store');
