@@ -6,54 +6,47 @@ use App\Http\Requests\Carriage\StoreCarriageRequest;
 use App\Http\Requests\Carriage\UpdateCarriageRequest;
 use App\Models\Carriage;
 use App\Models\Train;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class CarriageController extends Controller
 {
-    public const RELATIONS = ['seats', 'train'];
+    const RELATIONS = ['seats', 'train'];
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Train $train): Response
+
+    public function index(Train $train)
     {
         return Inertia::render('Carriages/Index', [
             'carriages' => $train->carriages()->with(self::RELATIONS)->paginate(),
+            'train' => $train,
         ]);
     }
 
-    public function create(): Response
+    public function create(Train $train)
     {
         return Inertia::render('Carriages/Create', [
             'trains' => Train::all(),
+            'train' => $train,
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCarriageRequest $request, Train $train): RedirectResponse
+    public function store(StoreCarriageRequest $request, Train $train)
     {
-        $carriage = $train->carriages()->create($request->validated());
+        $train->carriages()->create($request->validated());
 
-        session()?->flash('message', 'Carriage created successfully!');
+        session()->flash('message', 'Carriage created successfully!');
 
-        return redirect()->route('carriages.show', [$train, $carriage]);
+        return redirect()->route('trains.carriages.index', [$train]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Carriage $carriage): Response
+
+    public function show(Carriage $carriage)
     {
         return Inertia::render('Carriages/Show', [
             'carriage' => $carriage->load(self::RELATIONS),
         ]);
     }
 
-    public function edit(Carriage $carriage): Response
+    public function edit(Carriage $carriage)
     {
         return Inertia::render('Carriages/Edit', [
             'carriage' => $carriage->load(self::RELATIONS),
@@ -61,27 +54,24 @@ class CarriageController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCarriageRequest $request, Carriage $carriage): RedirectResponse
+    public function update(UpdateCarriageRequest $request, Carriage $carriage)
     {
         $carriage->update($request->validated());
 
-        session()?->flash('message', 'Carriage updated successfully!');
+        session()->flash('message', 'Carriage updated successfully!');
 
-        return redirect()->route('carriages.show', $carriage);
+        return redirect()->route('trains.carriages.index', $carriage->train()->first());
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Carriage $carriage): RedirectResponse
+    public function destroy(Carriage $carriage)
     {
         $carriage->delete();
 
-        session()?->flash('message', 'Carriage deleted successfully!');
+        session()->flash('message', 'Carriage deleted successfully!');
 
-        return redirect()->route('carriages.index');
+        return redirect()->route('trains.carriages.index');
     }
 }

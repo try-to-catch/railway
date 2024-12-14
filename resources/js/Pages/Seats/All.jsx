@@ -6,7 +6,7 @@ export default function Index({ seats }) {
         <AuthenticatedLayout>
             <Head title="Seats" />
             <div style={{ padding: '20px' }}>
-                {/* + Button to go to the Create Seat page */}
+        
                 <Link
                     href={route('carriages.seats.create', { carriage: seats.data[0].carriage_id })}
                     style={{
