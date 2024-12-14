@@ -6,28 +6,25 @@ export default function Index({ seats }) {
         <AuthenticatedLayout>
             <Head title="Seats" />
             <div style={{ padding: '20px' }}>
-        
-                <Link
-                    href={route('carriages.seats.create', { carriage: seats.data[0].carriage_id })}
-                    style={{
-                        display: 'inline-block',
-                        marginBottom: '20px',
-                        padding: '10px 20px',
-                        backgroundColor: '#28a745',
-                        color: '#fff',
-                        borderRadius: '50%',
-                        fontSize: '20px',
-                        textAlign: 'center',
-                        textDecoration: 'none',
-                        width: '40px',
-                        height: '40px',
-                        lineHeight: '20px',
-                        textAlign: 'center'
-                    }}
-                >
-                    +
-                </Link>
 
+                {/* Кнопка добавления нового сиденья */}
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <Link
+                        href={route('carriages.seats.create', { carriage: seats.data[0].carriage_id })}
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '5px',
+                            fontSize: '16px',
+                        }}
+                    >
+                        <span style={{ marginRight: '5px' }}>+</span> Create Seat
+                    </Link>
+                </div>
+
+        
                 <div
                     style={{
                         display: 'flex',

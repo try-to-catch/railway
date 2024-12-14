@@ -10,12 +10,29 @@ export default function Index({ carriages, train }) {
                     Carriages for Train {train.id}
                 </h2>
 
+               
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    <Link
+                        href={route('trains.edit', { train: train.id })} 
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '5px',
+                            fontSize: '16px',
+                            marginRight: '10px', 
+                        }}
+                    >
+                        Edit Train
+                    </Link>
+
+                
                     <Link
                         href={`/trains/${train.id}/carriages/create`}
                         style={{
                             padding: '10px 20px',
-                            backgroundColor: '#007bff',
+                            backgroundColor: '#28a745',
                             color: 'white',
                             textDecoration: 'none',
                             borderRadius: '5px',
@@ -26,20 +43,13 @@ export default function Index({ carriages, train }) {
                     </Link>
                 </div>
 
-                <div
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                        gap: '20px',
-                        justifyContent: 'center',
-                    }}
-                >
+                <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
                     {carriages.data.map((carriage, index) => (
                         <Link
                             key={index}
-                            href={`/carriages/${carriage.id}/edit`}  // Переход на страницу редактирования
+                            href={`/carriages/${carriage.id}/seats`}  
                             style={{
-                                textDecoration: 'none',  // Убираем подчеркивание
+                                textDecoration: 'none',
                                 backgroundColor: '#f8f9fa',
                                 border: '1px solid #ddd',
                                 borderRadius: '8px',
