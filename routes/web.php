@@ -27,19 +27,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::controller(SeatController::class)->group(
-    function () {
-        Route::get('/carriages/{carriage}/seats', [SeatController::class, 'index'])->name('carriages.seats.index');
-        Route::get('/carriages/{carriage}/seats/create', [SeatController::class, 'create'])->name('carriages.seats.create');
-        Route::post('/carriages/{carriage}/seats', [SeatController::class, 'store'])->name('carriages.seats.store');
-        Route::get('/seats/{seat}', [SeatController::class, 'show'])->name('carriages.seats.show');
-        Route::get('/seats/{seat}/edit', [SeatController::class, 'edit'])->name('carriages.seats.edit');
-        Route::put('/seats/{seat}', [SeatController::class, 'update'])->name('carriages.seats.update');
-        Route::delete('/seats/{seat}', [SeatController::class, 'destroy'])->name('carriages.seats.destroy');
+Route::middleware('auth')->group(function () {
+    Route::controller(SeatController::class)->group(function () {
+        Route::get('/carriages/{carriage}/seats', 'index')->name('carriages.seats.index');
+        Route::get('/carriages/{carriage}/seats/create', 'create')->name('carriages.seats.create');
+        Route::post('/carriages/{carriage}/seats', 'store')->name('carriages.seats.store');
+        Route::get('/seats/{seat}', 'show')->name('carriages.seats.show');
+        Route::get('/seats/{seat}/edit', 'edit')->name('carriages.seats.edit');
+        Route::put('/seats/{seat}', 'update')->name('carriages.seats.update');
+        Route::delete('/seats/{seat}', 'destroy')->name('carriages.seats.destroy');
+        Route::get('/seats', 'all')->name('seats.index');
+    });
+});
 
-        Route::get('/seats', [SeatController::class, 'all'])->name('seats.index');
-    }
-);
 
 Route::controller(CarriageController::class)->group(
     function () {

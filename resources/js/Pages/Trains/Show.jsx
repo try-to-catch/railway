@@ -1,11 +1,11 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {Head} from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import { Head } from '@inertiajs/react'
 
-export default function Show({train}) {
+export default function Show ({ train }) {
     return (
         <AuthenticatedLayout>
-            <Head title="Train"/>
-            <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+            <Head title='Train' />
+            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                 <ul>
                     <li>id: {train.id}</li>
                     <li>name: {train.name}</li>
@@ -15,5 +15,5 @@ export default function Show({train}) {
                 </ul>
             </div>
         </AuthenticatedLayout>
-    );
+    )
 }

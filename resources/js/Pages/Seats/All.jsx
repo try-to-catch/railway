@@ -1,19 +1,68 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function Index({ seats }) {
-    console.log(seats.data)
     return (
         <AuthenticatedLayout>
-            <Head title="Seats"/>
-            <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
-                {seats.data.map((seat, index) => (
-                    <ul key={index}>
-                        <li>id: {seat.id}</li>
-                        <li>is_reserved: {seat.is_reserved}</li>
-                        <li>number: {seat.number}</li>
-                    </ul>
-                ))}
+            <Head title="Seats" />
+            <div style={{ padding: '20px' }}>
+                {/* + Button to go to the Create Seat page */}
+                <Link
+                    href={route('carriages.seats.create', { carriage: seats.data[0].carriage_id })}
+                    style={{
+                        display: 'inline-block',
+                        marginBottom: '20px',
+                        padding: '10px 20px',
+                        backgroundColor: '#28a745',
+                        color: '#fff',
+                        borderRadius: '50%',
+                        fontSize: '20px',
+                        textAlign: 'center',
+                        textDecoration: 'none',
+                        width: '40px',
+                        height: '40px',
+                        lineHeight: '20px',
+                        textAlign: 'center'
+                    }}
+                >
+                    +
+                </Link>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        gap: '20px',
+                        padding: '20px'
+                    }}
+                >
+                    {seats.data.map((seat, index) => (
+                        <Link
+                            key={index}
+                            href={route('carriages.seats.edit', { seat: seat.id })}
+                            style={{
+                                textDecoration: 'none',
+                                display: 'block',
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
+                                padding: '15px',
+                                minWidth: '150px',
+                                textAlign: 'center',
+                                backgroundColor: seat.is_reserved ? '#f8d7da' : '#d4edda',
+                                color: seat.is_reserved ? '#721c24' : '#155724'
+                            }}
+                        >
+                            <h3 style={{ margin: '0 0 10px' }}>Seat {seat.number}</h3>
+                            <p>
+                                <strong>ID:</strong> {seat.id}
+                            </p>
+                            <p>
+                                <strong>Reserved:</strong> {seat.is_reserved ? 'Yes' : 'No'}
+                            </p>
+                        </Link>
+                    ))}
+                </div>
             </div>
         </AuthenticatedLayout>
     );
