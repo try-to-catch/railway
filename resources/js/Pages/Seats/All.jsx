@@ -22,7 +22,6 @@ export default function Index({ seats }) {
                         width: '40px',
                         height: '40px',
                         lineHeight: '20px',
-                        textAlign: 'center'
                     }}
                 >
                     +
