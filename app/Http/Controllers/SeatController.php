@@ -23,8 +23,14 @@ class SeatController extends Controller
      */
     public function index(Carriage $carriage)
     {
+        $search = request('search');
+
         return Inertia::render('Seats/Index', [
-            'seats' => $carriage->seats()->with(self::relations)->paginate(),
+            'seats' => $carriage
+                ->seats()
+                ->with(self::relations)
+                ->where('number', 'like', "%$search%")
+                ->paginate(),
         ]);
     }
 
