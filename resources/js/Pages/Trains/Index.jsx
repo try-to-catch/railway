@@ -8,6 +8,21 @@ export default function Index({ trains }) {
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                 <h2>Trains</h2>
             </div>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <Link
+                    href={route('trains.create')}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        textDecoration: 'none',
+                        borderRadius: '5px',
+                        fontSize: '16px',
+                    }}
+                >
+                    Create Train
+                </Link>
+            </div>
             <div
                 style={{
                     display: 'flex',
@@ -40,20 +55,7 @@ export default function Index({ trains }) {
                     </Link>
                 ))}
             </div>
-            <Link
-                href={route('trains.create')}
-                style={{
-                    padding: '10px 15px',
-                    backgroundColor: '#28a745',
-                    color: '#fff',
-                    borderRadius: '4px',
-                    textDecoration: 'none',
-                    fontSize: '20px',
-                    alignItems: 'start',
-                }}
-            >
-                <span style={{ marginRight: '5px' }}>+</span> Create Train
-            </Link>
+       
         </AuthenticatedLayout>
     );
 }
