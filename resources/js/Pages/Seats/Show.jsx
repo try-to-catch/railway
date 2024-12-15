@@ -1,16 +1,16 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import { Head, Link } from '@inertiajs/react'
 
-export default function Show({ seat }) {
+export default function Show ({ seat }) {
     return (
         <AuthenticatedLayout>
-            <Head title="Seat" />
+            <Head title='Seat' />
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    padding: '20px',
+                    padding: '20px'
                 }}
             >
                 <div
@@ -21,9 +21,11 @@ export default function Show({ seat }) {
                         padding: '20px',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                         textAlign: 'center',
-                        backgroundColor: seat.is_reserved ? '#f8d7da' : '#d4edda',
+                        backgroundColor: seat.is_reserved
+                            ? '#f8d7da'
+                            : '#d4edda',
                         width: '100%',
-                        maxWidth: '400px',
+                        maxWidth: '400px'
                     }}
                 >
                     <h3 style={{ marginBottom: '15px' }}>Seat {seat.number}</h3>
@@ -35,7 +37,8 @@ export default function Show({ seat }) {
                             <strong>Number:</strong> {seat.number}
                         </li>
                         <li style={{ marginBottom: '10px' }}>
-                            <strong>Reserved:</strong> {seat.is_reserved ? 'Yes' : 'No'}
+                            <strong>Reserved:</strong>{' '}
+                            {seat.is_reserved ? 'Yes' : 'No'}
                         </li>
                     </ul>
                 </div>
@@ -48,12 +51,12 @@ export default function Show({ seat }) {
                         color: 'white',
                         textDecoration: 'none',
                         borderRadius: '5px',
-                        fontSize: '16px',
+                        fontSize: '16px'
                     }}
                 >
                     Back to Seats
                 </Link>
             </div>
         </AuthenticatedLayout>
-    );
+    )
 }
