@@ -40,7 +40,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-
 Route::controller(CarriageController::class)->group(
     function () {
         Route::get('/trains/{train}/carriages', [CarriageController::class, 'index'])->name('trains.carriages.index');

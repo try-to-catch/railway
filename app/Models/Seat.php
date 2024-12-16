@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ class Seat extends Model
     protected $fillable = [
         'number',
         'is_reserved',
-        'carriage_id', 
+        'carriage_id',
     ];
 
     public function carriage(): BelongsTo
@@ -20,4 +21,3 @@ class Seat extends Model
         return $this->belongsTo(Carriage::class);
     }
 }
-?>

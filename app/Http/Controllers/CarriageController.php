@@ -14,7 +14,6 @@ class CarriageController extends Controller
 {
     public const RELATIONS = ['seats', 'train'];
 
-
     public function index(Train $train): Response
     {
         return Inertia::render('Carriages/Index', [
@@ -39,7 +38,6 @@ class CarriageController extends Controller
 
         return redirect()->route('trains.carriages.index', [$train]);
     }
-
 
     public function show(Carriage $carriage): Response
     {
