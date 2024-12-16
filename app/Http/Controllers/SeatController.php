@@ -6,13 +6,15 @@ use App\Http\Requests\Seat\StoreSeatRequest;
 use App\Http\Requests\Seat\UpdateSeatRequest;
 use App\Models\Carriage;
 use App\Models\Seat;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class SeatController extends Controller
 {
-    const relations = ['carriage'];
+    public const relations = ['carriage'];
 
-    public function all()
+    public function all(): Response
     {
         return Inertia::render('Seats/All', [
             'seats' => Seat::with(self::relations)->paginate(),
@@ -21,7 +23,7 @@ class SeatController extends Controller
 
     /* Display a listing of the resource.
      */
-    public function index(Carriage $carriage)
+    public function index(Carriage $carriage): Response
     {
         $search = request('search');
 
@@ -34,7 +36,7 @@ class SeatController extends Controller
         ]);
     }
 
-    public function create(Carriage $carriage)
+    public function create(Carriage $carriage): Response
     {
         return Inertia::render('Seats/Create', [
             'carriages' => Carriage::all(),
@@ -44,25 +46,25 @@ class SeatController extends Controller
 
     /* Store a newly created resource in storage.
      */
-    public function store(StoreSeatRequest $request, Carriage $carriage)
+    public function store(StoreSeatRequest $request, Carriage $carriage): RedirectResponse
     {
-        $seat = $carriage->seats()->create($request->validated());
+        $carriage->seats()->create($request->validated());
 
-        session()->flash('message', 'Seat created successfully!');
+        session()?->flash('message', 'Seat created successfully!');
 
         return redirect()->route('carriages.seats.index', $carriage);
     }
 
     /* Display the specified resource.
      */
-    public function show(Seat $seat)
+    public function show(Seat $seat): Response
     {
         return Inertia::render('Seats/Show', [
             'seat' => $seat->load(self::relations),
         ]);
     }
 
-    public function edit(Seat $seat)
+    public function edit(Seat $seat): Response
     {
         return Inertia::render('Seats/Edit', [
             'seat' => $seat->load(self::relations),
@@ -72,11 +74,11 @@ class SeatController extends Controller
 
     /* Update the specified resource in storage.
      */
-    public function update(UpdateSeatRequest $request, Seat $seat)
+    public function update(UpdateSeatRequest $request, Seat $seat): RedirectResponse
     {
         $seat->update($request->validated());
 
-        session()->flash('message', 'Seat updated successfully!');
+        session()?->flash('message', 'Seat updated successfully!');
 
         return redirect()->route('carriages.seats.index', $seat->carriage()->first());
     }
@@ -84,11 +86,11 @@ class SeatController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Seat $seat)
+    public function destroy(Seat $seat): RedirectResponse
     {
         $seat->delete();
 
-        session()->flash('message', 'Seat deleted successfully!');
+        session()?->flash('message', 'Seat deleted successfully!');
 
         return redirect()->route('carriages.seats.index', $seat->carriage()->first());
     }
