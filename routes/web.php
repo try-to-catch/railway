@@ -4,6 +4,7 @@ use App\Http\Controllers\CarriageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\TrainController;
+use App\Models\Seat;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,8 +19,11 @@ Route::get('/', static function () {
 });
 
 Route::get('/dashboard', static function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return Inertia::render('Dashboard', [
+        'seats' => Seat::with('carriage')
+            ->where('reserved_by_id', auth()->id())->paginate(),
+    ]);
+})->middleware('auth')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -63,7 +67,5 @@ Route::controller(TrainController::class)->group(
         Route::delete('/trains/{train}', [TrainController::class, 'destroy'])->name('trains.destroy');
     }
 );
-
-Route::get('user-seats', [SeatController::class, 'user_seats'])->name('user.seats');
 
 require __DIR__.'/auth.php';
