@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Carriage;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,13 @@ return new class extends Migration
 
             $table->string('number');
             $table->unsignedInteger('price');
+
             $table->boolean('is_reserved')->default(false);
+            $table->foreignIdFor(User::class, 'reserved_by_id')
+                ->nullable()
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
 
             $table->foreignIdFor(Carriage::class)
                 ->constrained()

@@ -17,6 +17,7 @@ class StoreSeatRequest extends FormRequest
             'number' => ['required', 'string'],
             'price' => ['required', 'integer'],
             'is_reserved' => ['required', 'boolean'],
+            'reserved_by_id' => ['nullable', 'integer'],
         ];
     }
 }

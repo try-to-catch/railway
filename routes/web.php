@@ -64,4 +64,6 @@ Route::controller(TrainController::class)->group(
     }
 );
 
+Route::get('user-seats', [SeatController::class, 'user_seats'])->name('user.seats');
+
 require __DIR__.'/auth.php';

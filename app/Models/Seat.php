@@ -15,10 +15,16 @@ class Seat extends Model
         'price',
         'is_reserved',
         'carriage_id',
+        'reserved_by_id',
     ];
 
     public function carriage(): BelongsTo
     {
         return $this->belongsTo(Carriage::class);
+    }
+
+    public function reservedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reserved_by_id');
     }
 }

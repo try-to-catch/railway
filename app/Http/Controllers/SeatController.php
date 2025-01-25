@@ -21,6 +21,14 @@ class SeatController extends Controller
         ]);
     }
 
+    public function user_seats(): Response
+    {
+        return Inertia::render('Seats/UserSeats', [
+            'seats' => Seat::with(self::relations)
+                ->where('reserved_by_id', auth()->id())->paginate(),
+        ]);
+    }
+
     /* Display a listing of the resource.
      */
     public function index(Carriage $carriage): Response
