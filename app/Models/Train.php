@@ -19,6 +19,13 @@ class Train extends Model
         'arrival',
     ];
 
+    public function scopeFilterSeatsByPrice($query, $minPrice, $maxPrice)
+    {
+        return $query->whereHas('carriages.seats', function ($query) use ($minPrice, $maxPrice) {
+            $query->whereBetween('price', [$minPrice, $maxPrice]);
+        });
+    }
+
     public function carriages(): HasMany
     {
         return $this->hasMany(Carriage::class);

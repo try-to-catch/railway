@@ -17,8 +17,17 @@ class TrainController extends Controller
      */
     public function index(): Response
     {
+        $minPrice = request('min_price');
+        $maxPrice = request('max_price');
+
+        $trainsQuery = Train::query()->with(self::RELATIONS);
+
+        if ($minPrice !== null && $maxPrice !== null) {
+            $trainsQuery->filterSeatsByPrice($minPrice, $maxPrice);
+        }
+
         return Inertia::render('Trains/Index', [
-            'trains' => Train::query()->with(self::RELATIONS)->paginate(),
+            'trains' => $trainsQuery->paginate(),
         ]);
     }
 
