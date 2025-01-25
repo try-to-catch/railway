@@ -22,7 +22,7 @@ class TrainFactory extends Factory
             'from' => fake()->city(),
             'to' => fake()->city(),
 
-            'date' => fake()->dateTime(),
+            'date' => fake()->dateTime()->format('Y-m-d'),
         ];
     }
 }

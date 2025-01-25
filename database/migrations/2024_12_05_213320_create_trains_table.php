@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->string('from');
             $table->string('to');
-            $table->dateTime('date');
+            $table->date('date');
 
             $table->timestamps();
         });
