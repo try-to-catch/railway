@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Support\QueryBuilders\TrainQueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static Train|TrainQueryBuilder query()
+ */
 class Train extends Model
 {
     /** @use HasFactory<\Database\Factories\TrainFactory> */
@@ -19,11 +23,9 @@ class Train extends Model
         'arrival',
     ];
 
-    public function scopeFilterSeatsByPrice($query, $minPrice, $maxPrice)
+    public function newEloquentBuilder($query): TrainQueryBuilder
     {
-        return $query->whereHas('carriages.seats', function ($query) use ($minPrice, $maxPrice) {
-            $query->whereBetween('price', [$minPrice, $maxPrice]);
-        });
+        return new TrainQueryBuilder($query);
     }
 
     public function carriages(): HasMany
