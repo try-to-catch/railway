@@ -21,6 +21,8 @@ class TrainFactory extends Factory
 
             'from' => fake()->city(),
             'to' => fake()->city(),
+
+            'date' => fake()->dateTime(),
         ];
     }
 }

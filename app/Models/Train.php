@@ -15,6 +15,7 @@ class Train extends Model
         'name',
         'from',
         'to',
+        'date',
     ];
 
     public function carriages(): HasMany
