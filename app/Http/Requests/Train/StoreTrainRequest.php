@@ -18,7 +18,8 @@ class StoreTrainRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'from' => ['required', 'string', 'max:255'],
             'to' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date:Y-m-d'],
+            'departure' => ['required', 'date'],
+            'arrival' => ['required', 'date'],
         ];
     }
 }
