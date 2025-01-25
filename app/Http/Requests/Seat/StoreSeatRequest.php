@@ -15,6 +15,7 @@ class StoreSeatRequest extends FormRequest
     {
         return [
             'number' => ['required', 'string'],
+            'price' => ['required', 'integer'],
             'is_reserved' => ['required', 'boolean'],
         ];
     }
