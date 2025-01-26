@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Train;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Train>
+ * @extends Factory<Train>
  */
 class TrainFactory extends Factory
 {
@@ -16,14 +17,20 @@ class TrainFactory extends Factory
      */
     public function definition(): array
     {
+        $departureFrom = now()->addWeek()->addDays(rand(1, 7));
+
+        $departure = fake()->dateTimeBetween($departureFrom, $departureFrom->addDays(rand(1, 7)));
+
+        $arrival = fake()->dateTimeBetween($departure, now()->parse($departure)->addHours(rand(10, 50)));
+
         return [
             'name' => fake()->name(),
 
             'from' => fake()->city(),
             'to' => fake()->city(),
 
-            'departure' => fake()->dateTime(),
-            'arrival' => fake()->dateTime(),
+            'departure' => $departure,
+            'arrival' => $arrival,
         ];
     }
 }

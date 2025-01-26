@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Seat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Seat>
+ * @extends Factory<Seat>
  */
 class SeatFactory extends Factory
 {
@@ -18,7 +19,7 @@ class SeatFactory extends Factory
     {
         return [
             'number' => fake()->numberBetween(1, 100),
-            'price' => fake()->numberBetween(10, 100),
+            'price' => fake()->numberBetween(10, 1000),
             'is_reserved' => fake()->boolean(),
         ];
     }
