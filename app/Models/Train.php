@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Support\QueryBuilders\TrainQueryBuilder;
+use Carbon\Carbon;
+use Database\Factories\TrainFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Train extends Model
 {
-    /** @use HasFactory<\Database\Factories\TrainFactory> */
+    /** @use HasFactory<TrainFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -31,5 +33,16 @@ class Train extends Model
     public function carriages(): HasMany
     {
         return $this->hasMany(Carriage::class);
+    }
+
+    public function getDepartureAttribute($attribute): string
+    {
+        return Carbon::parse($attribute)->format('H:i Y-m-d ');
+    }
+
+
+    public function getArrivalAttribute($attribute): string
+    {
+        return Carbon::parse($attribute)->format('H:i Y-m-d ');
     }
 }

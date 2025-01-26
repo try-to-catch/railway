@@ -47,7 +47,15 @@ class TrainQueryBuilder extends Builder
 
     public function filterByRoute($from, $to): TrainQueryBuilder
     {
-        return $this->where('from', $from)->where('to', $to);
+        if ($from ) {
+            $this->where('from', 'like', '%'.$from.'%');
+        }
+
+        if ($to) {
+            $this->where('to', 'like', '%'.$to.'%');
+        }
+
+        return $this;
     }
 
     public function filterByDate($date): TrainQueryBuilder
@@ -74,7 +82,7 @@ class TrainQueryBuilder extends Builder
         $from = request('from');
         $to = request('to');
 
-        if ($from !== null && $to !== null) {
+        if ($from || $to) {
             $this->filterByRoute($from, $to);
         }
 

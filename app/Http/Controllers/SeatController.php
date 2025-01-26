@@ -69,6 +69,7 @@ class SeatController extends Controller
         return Inertia::render('Seats/Edit', [
             'seat' => $seat->load(self::relations),
             'carriages' => Carriage::all(),
+            'user' => auth()->user(),
         ]);
     }
 
@@ -93,5 +94,13 @@ class SeatController extends Controller
         session()?->flash('message', 'Seat deleted successfully!');
 
         return redirect()->route('carriages.seats.index', $seat->carriage()->first());
+    }
+
+    public function reserve(Seat $seat): void
+    {
+        $seat->update([
+            'reserved_by_id' => auth()->id(),
+            'is_reserved' => true,
+        ]);
     }
 }

@@ -2,12 +2,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head, useForm } from '@inertiajs/react'
 import { useState } from 'react'
 
-export default function Index ({ seats }) {
+export default function Index({ seats }) {
     const { data, setData, post, processing } = useForm({
         seats: seats.data
     })
 
     const [searchQuery, setSearchQuery] = useState('')
+    const [minPrice, setMinPrice] = useState('')
+    const [maxPrice, setMaxPrice] = useState('')
 
     const handleReserve = seatId => {
         const updatedSeats = data.seats.map(seat =>
@@ -24,19 +26,22 @@ export default function Index ({ seats }) {
                 setData('seats', revertedSeats)
                 alert('Failed to reserve the seat. Please try again.')
             },
-            onSuccess: () => {
-                alert('Seat reserved successfully!')
-            }
         })
     }
 
     const filteredSeats = data.seats.filter(seat => {
-        return seat.number.toLowerCase().includes(searchQuery.toLowerCase())
+        const matchesQuery = seat.number
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        const matchesMinPrice = minPrice === '' || seat.price >= Number(minPrice)
+        const matchesMaxPrice = maxPrice === '' || seat.price <= Number(maxPrice)
+
+        return matchesQuery && matchesMinPrice && matchesMaxPrice
     })
 
     return (
         <AuthenticatedLayout>
-            <Head title='Seats' />
+            <Head title="Seats" />
             <div
                 style={{
                     padding: '20px',
@@ -45,20 +50,59 @@ export default function Index ({ seats }) {
                     alignItems: 'center'
                 }}
             >
-                <input
-                    type='text'
-                    placeholder='Search by seat number...'
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    style={{
-                        padding: '10px',
-                        width: '300px',
-                        marginBottom: '20px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc'
-                    }}
-                />
+                {/* Фильтр поиска */}
+                <div style={{ marginBottom: '20px' }}>
+                    <input
+                        type="text"
+                        placeholder="Search by seat number..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        style={{
+                            padding: '10px',
+                            width: '310px',
+                            marginBottom: '10px',
+                            borderRadius: '5px',
+                            border: '1px solid #ccc'
+                        }}
+                    />
+                </div>
 
+                {/* Фильтр по цене */}
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '10px',
+                        justifyContent: 'center',
+                        marginBottom: '20px'
+                    }}
+                >
+                    <input
+                        type="number"
+                        placeholder="Min Price"
+                        value={minPrice}
+                        onChange={e => setMinPrice(e.target.value)}
+                        style={{
+                            padding: '10px',
+                            width: '150px',
+                            borderRadius: '5px',
+                            border: '1px solid #ccc'
+                        }}
+                    />
+                    <input
+                        type="number"
+                        placeholder="Max Price"
+                        value={maxPrice}
+                        onChange={e => setMaxPrice(e.target.value)}
+                        style={{
+                            padding: '10px',
+                            width: '150px',
+                            borderRadius: '5px',
+                            border: '1px solid #ccc'
+                        }}
+                    />
+                </div>
+
+                {/* Список мест */}
                 <div
                     style={{
                         display: 'flex',
@@ -97,7 +141,7 @@ export default function Index ({ seats }) {
                                     {seat.is_reserved ? 'Yes' : 'No'}
                                 </li>
                                 <li style={{ marginBottom: '10px' }}>
-                                    <strong>Number:</strong> {seat.number}
+                                    <strong>Price:</strong> {seat.price}$
                                 </li>
                             </ul>
 
@@ -117,7 +161,7 @@ export default function Index ({ seats }) {
                                             : 'pointer'
                                     }}
                                 >
-                                    {processing ? 'Reserving...' : 'Reserve'}
+                                    Reserve
                                 </button>
                             )}
                         </div>

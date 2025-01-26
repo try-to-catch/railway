@@ -20,8 +20,9 @@ Route::get('/', static function () {
 
 Route::get('/dashboard', static function () {
     return Inertia::render('Dashboard', [
-        'seats' => Seat::with('carriage')
-            ->where('reserved_by_id', auth()->id())->paginate(),
+        'seats' => Seat::with('carriage.train')
+            ->where('reserved_by_id', auth()->id())
+        ->get(),
     ]);
 })->middleware('auth')->name('dashboard');
 
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/seats/{seat}/edit', 'edit')->name('carriages.seats.edit');
         Route::put('/seats/{seat}', 'update')->name('carriages.seats.update');
         Route::delete('/seats/{seat}', 'destroy')->name('carriages.seats.destroy');
+        Route::post('/seats/{seat}/reserve', 'reserve')->name('seats.reserve');
         Route::get('/seats', 'all')->name('seats.index');
     });
 });
