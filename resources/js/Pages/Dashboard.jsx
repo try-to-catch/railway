@@ -10,7 +10,7 @@ export default function Dashboard({seats}) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {seats.length === 0 ? (
+                    {!seats?.length? (
                         <p style={{textAlign: 'center', fontSize: '24px'}}>
                             You didn't make reservations
                         </p>
