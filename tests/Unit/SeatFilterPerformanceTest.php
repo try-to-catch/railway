@@ -44,19 +44,19 @@ class SeatFilterPerformanceTest extends TestCase
         $minPrice = 10;
         $maxPrice = 100;
 
+        // Измерение времени выполнения для filterSeatsByPriceBinaryTree
+        $startTime = microtime(true);
+        Train::query()->filterSeatsByPriceLinkedList($minPrice, $maxPrice)->get();
+        $binaryTreeDuration = microtime(true) - $startTime;
+
         // Измерение времени выполнения для filterSeatsByPriceBTree
         $startTime = microtime(true);
         Train::query()->filterSeatsByPriceBTree($minPrice, $maxPrice)->get();
         $bTreeDuration = microtime(true) - $startTime;
 
-        // Измерение времени выполнения для filterSeatsByPriceBinaryTree
-        $startTime = microtime(true);
-        Train::query()->filterSeatsByPriceBinaryTree($minPrice, $maxPrice)->get();
-        $binaryTreeDuration = microtime(true) - $startTime;
-
         echo "Seat Count: $seatCount\n";
         echo "B-Tree Duration: $bTreeDuration seconds\n";
-        echo "Binary Tree Duration: $binaryTreeDuration seconds\n";
+        echo "Linked List Duration: $binaryTreeDuration seconds\n";
         echo "\n";
     }
 }
