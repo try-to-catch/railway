@@ -64,33 +64,58 @@ class TrainQueryBuilder extends Builder
         return $this->whereDate('departure', $date);
     }
 
-    public function filterSeatsByPriceLinkedList($minPrice, $maxPrice): Builder
+    public function filterSeatsByPriceLinkedList($minPrice, $maxPrice): \Illuminate\Database\Eloquent\Builder
     {
+        // Загружаем поезда с вагонами и местами
         $trains = $this->with(['carriages.seats'])->get();
 
-        $filteredTrains = $trains->filter(function ($train) use ($minPrice, $maxPrice) {
+        // Создаем связный список поездов
+        $trainList = new LinkedList();
+        foreach ($trains as $train) {
+            $trainList->add($train);
+        }
+
+        // Фильтруем поезда через связный список
+        $filteredTrains = [];
+        $currentTrain = $trainList->getHead();
+        while ($currentTrain !== null) {
+            $train = $currentTrain->data;
+
+            // Создаем связный список вагонов для текущего поезда
+            $carriageList = new LinkedList();
             foreach ($train->carriages as $carriage) {
-                // Создаем связный список для мест
+                $carriageList->add($carriage);
+            }
+
+            // Проходим по каждому вагону
+            $currentCarriage = $carriageList->getHead();
+            while ($currentCarriage !== null) {
+                $carriage = $currentCarriage->data;
+
+                // Создаем связный список мест
                 $seatList = new LinkedList();
                 foreach ($carriage->seats as $seat) {
                     $seatList->add($seat);
                 }
 
-                // Проходим по всем местам в связном списке
-                $current = $seatList->getHead();
-                while ($current !== null) {
-                    if ($current->seat->price >= $minPrice && $current->seat->price <= $maxPrice) {
-                        return true;
+                // Проходим по всем местам в вагоне
+                $currentSeat = $seatList->getHead();
+                while ($currentSeat !== null) {
+                    if ($currentSeat->data->price >= $minPrice && $currentSeat->data->price <= $maxPrice) {
+                        $filteredTrains[] = $train->id;
+                        break 2; // Выходим из цикла вагонов, если поезд подходит
                     }
-                    $current = $current->next;
+                    $currentSeat = $currentSeat->next;
                 }
+
+                $currentCarriage = $currentCarriage->next;
             }
 
-            return false;
-        });
+            $currentTrain = $currentTrain->next;
+        }
 
-        // Возвращаем запрос с отфильтрованными по цене поездами
-        return $this->whereIn('id', $filteredTrains->pluck('id'));
+        // Возвращаем запрос с отфильтрованными поездами
+        return $this->whereIn('id', $filteredTrains);
     }
 
     public function filter(): TrainQueryBuilder

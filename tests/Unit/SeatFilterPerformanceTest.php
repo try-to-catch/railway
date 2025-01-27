@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\Carriage;
 use App\Models\Seat;
 use App\Models\Train;
-use App\Support\QueryBuilders\TrainQueryBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -25,16 +24,21 @@ class SeatFilterPerformanceTest extends TestCase
 
     public function testFilterSeatsByPricePerformance()
     {
-        $this->benchmarkFilterSeatsByPrice(1);
-        $this->benchmarkFilterSeatsByPrice(10);
-        $this->benchmarkFilterSeatsByPrice(100);
-        $this->benchmarkFilterSeatsByPrice(1000);
+        $this->benchmarkFilterSeatsByPrice(1, 5,10);
+        $this->benchmarkFilterSeatsByPrice(10, 25, 25);
+        $this->benchmarkFilterSeatsByPrice(100, 50, 50);
     }
 
-    protected function benchmarkFilterSeatsByPrice(int $seatCount): void
+    protected function benchmarkFilterSeatsByPrice(int $seatCount, $carriageCount, $trainCount): void
     {
-        // Обновление количества мест в каждом вагоне
-        Train::all()->each(function ($train) use ($seatCount) {
+        Train::query()->delete();
+
+        Train::factory($trainCount)->create();
+
+        Train::all()->each(function ($train) use ($carriageCount, $seatCount) {
+            $train->carriages()->delete();
+            Carriage::factory($carriageCount)->create(['train_id' => $train->id]);
+
             $train->carriages->each(function ($carriage) use ($seatCount) {
                 $carriage->seats()->delete();
                 Seat::factory($seatCount)->create(['carriage_id' => $carriage->id]);

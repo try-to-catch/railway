@@ -50,7 +50,7 @@ export default function Index({ trains }) {
 
                     <div style={{border: '2px dashed', padding: '5px'}}>
                         <div style={{paddingBottom: '5px'}}>
-                            <label>Min Price (Binary):</label>
+                            <label>Min Price (Linked List):</label>
                             <input
                                 type="number"
                                 value={data.min_price_binary}
@@ -59,7 +59,7 @@ export default function Index({ trains }) {
                             />
                         </div>
                         <div>
-                            <label>Max Price (Binary):</label>
+                            <label>Max Price (Linked List):</label>
                             <input
                                 type="number"
                                 value={data.max_price_binary}

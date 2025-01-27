@@ -4,14 +4,16 @@ namespace App\Utilities;
 
 class LinkedList
 {
-    private $head;
+    private $head; // Начало списка
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->head = null;
     }
 
-    public function add($seat) {
-        $node = new ListNode($seat);
+    public function add($data)
+    {
+        $node = new ListNode($data);
         if ($this->head === null) {
             $this->head = $node;
         } else {
@@ -23,7 +25,8 @@ class LinkedList
         }
     }
 
-    public function getHead() {
+    public function getHead()
+    {
         return $this->head;
     }
 }
