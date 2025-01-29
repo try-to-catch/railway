@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 )
             )
             ->has(
-                TrainSchedule::factory(5)
+                TrainSchedule::factory(3)
             )
             ->create();
     }

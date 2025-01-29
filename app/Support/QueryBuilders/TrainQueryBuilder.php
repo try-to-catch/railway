@@ -39,7 +39,7 @@ class TrainQueryBuilder extends Builder
             ->all();
 
         // Apply filter by train IDs
-        return $this->whereIn('id', $trainIds);
+        return $this->whereIn('trains.id', $trainIds);
     }
 
     public function filterSeatsByPriceBinaryTree($minPriceBinary, $maxPriceBinary): TrainQueryBuilder
@@ -58,7 +58,7 @@ class TrainQueryBuilder extends Builder
             return false;
         });
 
-        return $this->whereIn('id', $filteredTrains->pluck('id'));
+        return $this->whereIn('trains.id', $filteredTrains->pluck('trains.id'));
     }
 
     public function filterByRoute($from, $to): TrainQueryBuilder
@@ -130,7 +130,7 @@ class TrainQueryBuilder extends Builder
         }
 
         // Возвращаем запрос с отфильтрованными поездами
-        return $this->whereIn('id', $filteredTrains);
+        return $this->whereIn('trains.id', $filteredTrains);
     }
 
     public function filter(): TrainQueryBuilder
