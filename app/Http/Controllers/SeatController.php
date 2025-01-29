@@ -32,7 +32,8 @@ class SeatController extends Controller
                 ->seats()
                 ->with(self::relations)
                 ->where('number', 'like', "%$search%")
-                ->paginate(),
+                ->paginate(100),
+            'carriage' => $carriage,
         ]);
     }
 

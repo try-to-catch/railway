@@ -21,8 +21,6 @@ class Train extends Model
         'name',
         'from',
         'to',
-        'departure',
-        'arrival',
     ];
 
     public function newEloquentBuilder($query): TrainQueryBuilder
@@ -33,6 +31,11 @@ class Train extends Model
     public function carriages(): HasMany
     {
         return $this->hasMany(Carriage::class);
+    }
+
+    public function trainSchedule(): HasMany
+    {
+        return $this->hasMany(TrainSchedule::class);
     }
 
     public function getDepartureAttribute($attribute): string

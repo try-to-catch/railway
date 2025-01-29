@@ -2,29 +2,44 @@
 
 namespace App\Support\QueryBuilders;
 
+use App\Utilities\BTree\BTree;
 use App\Utilities\LinkedList;
 use Illuminate\Database\Eloquent\Builder;
 
 class TrainQueryBuilder extends Builder
 {
-    public function filterSeatsByPriceBTree($minPriceB, $maxPriceB): TrainQueryBuilder
+    public function filterSeatsByPriceBTree($minPrice, $maxPrice): self
     {
         $trains = $this->with(['carriages.seats'])->get();
 
-        $filteredTrains = $trains->filter(function ($train) use ($minPriceB, $maxPriceB) {
+        // Create B-tree and insert all seats
+        $bTree = new BTree(3); // degree = 3
+
+        foreach ($trains as $train) {
             foreach ($train->carriages as $carriage) {
-                $sortedSeats = $carriage->seats;
-                foreach ($sortedSeats as $seat) {
-                    if ($seat->price >= $minPriceB && $seat->price <= $maxPriceB) {
-                        return true;
-                    }
+                foreach ($carriage->seats as $seat) {
+                    $seatData = [
+                        'seat' => $seat,
+                        'carriage' => $carriage,
+                        'train' => $train
+                    ];
+                    $bTree->insert($seat->price, $seatData);
                 }
             }
+        }
 
-            return false;
-        });
+        // Get all seats in the given price range
+        $filteredSeats = $bTree->searchRange($minPrice, $maxPrice);
 
-        return $this->whereIn('id', $filteredTrains->pluck('id'));
+        // Collect train IDs that have seats in the given range
+        $trainIds = collect($filteredSeats)
+            ->pluck('train.id')
+            ->unique()
+            ->values()
+            ->all();
+
+        // Apply filter by train IDs
+        return $this->whereIn('id', $trainIds);
     }
 
     public function filterSeatsByPriceBinaryTree($minPriceBinary, $maxPriceBinary): TrainQueryBuilder

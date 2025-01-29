@@ -1,27 +1,30 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function CreateSeat({ carriages,carriage }) {
-    const { data, setData, post, processing, errors } = useForm({
-        number: '',
-        is_reserved: false,
+export default function CreateTrip({ train }) {
+    const { data, setData, post, processing, reset, errors } = useForm({
+        train_id: train.id,
+        departure: '',
+        arrival: '',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('carriages.seats.store', { carriage: carriage.id }), {
+
+        post(route('trains.trips.store', train.id), {
             onSuccess: () => {
-                alert('Seat created successfully!');
+                alert('Trip created successfully!');
+                reset();
             },
             onError: () => {
-                alert('Failed to create seat. Please check the input.');
+                alert('Failed to create trip. Please check the input.');
             },
         });
     };
 
     return (
         <AuthenticatedLayout>
-            <Head title="Create Seat" />
+            <Head title="Add trip" />
 
             <div
                 style={{
@@ -33,21 +36,24 @@ export default function CreateSeat({ carriages,carriage }) {
                     backgroundColor: '#f8f9fa',
                 }}
             >
-                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Create Seat</h2>
+                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    Create Trip for Train {train.id}
+                </h2>
+
                 <form onSubmit={handleSubmit}>
-
+                    {/* Carriage Number */}
                     <div style={{ marginBottom: '15px' }}>
                         <label
-                            htmlFor="seatNumber"
+                            htmlFor="departure"
                             style={{ display: 'block', marginBottom: '5px' }}
                         >
-                            Seat Number:
+                            Departure time:
                         </label>
                         <input
-                            type="text"
-                            id="seatNumber"
-                            value={data.number}
-                            onChange={(e) => setData('number', e.target.value)}
+                            type="datetime-local"
+                            id="departure"
+                            value={data.departure}
+                            onChange={(e) => setData('departure', e.target.value)}
                             style={{
                                 width: '100%',
                                 padding: '10px',
@@ -56,25 +62,26 @@ export default function CreateSeat({ carriages,carriage }) {
                             }}
                             required
                         />
-                        {errors.number && (
+                        {errors.departure && (
                             <div style={{ color: 'red', marginTop: '5px' }}>
-                                {errors.number}
+                                {errors.departure}
                             </div>
                         )}
                     </div>
 
+                    {/* Carriage Class */}
                     <div style={{ marginBottom: '15px' }}>
                         <label
-                            htmlFor="seatNumber"
+                            htmlFor="arrival"
                             style={{ display: 'block', marginBottom: '5px' }}
                         >
-                            Price:
+                            Arrival time:
                         </label>
                         <input
-                            type="number"
-                            id="price"
-                            value={data.price}
-                            onChange={(e) => setData('price', e.target.value)}
+                            type="datetime-local"
+                            id="arrival"
+                            value={data.arrival}
+                            onChange={(e) => setData('arrival', e.target.value)}
                             style={{
                                 width: '100%',
                                 padding: '10px',
@@ -83,30 +90,14 @@ export default function CreateSeat({ carriages,carriage }) {
                             }}
                             required
                         />
-                        {errors.price && (
+                        {errors.arrival && (
                             <div style={{ color: 'red', marginTop: '5px' }}>
-                                {errors.price}
+                                {errors.arrival}
                             </div>
                         )}
                     </div>
 
-                    {/* Reserved Checkbox */}
-                    <div style={{ marginBottom: '15px' }}>
-                        <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Is Reserved:
-                        </label>
-                        <input
-                            type="checkbox"
-                            id="isReserved"
-                            checked={data.is_reserved}
-                            onChange={(e) => setData('is_reserved', e.target.checked)}
-                        />
-                        {errors.is_reserved && (
-                            <div style={{ color: 'red', marginTop: '5px' }}>
-                                {errors.is_reserved}
-                            </div>
-                        )}
-                    </div>
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={processing}
@@ -121,7 +112,7 @@ export default function CreateSeat({ carriages,carriage }) {
                             cursor: processing ? 'not-allowed' : 'pointer',
                         }}
                     >
-                        {processing ? 'Creating...' : 'Create Seat'}
+                        {processing ? 'Creating...' : 'Create Trip'}
                     </button>
                 </form>
             </div>

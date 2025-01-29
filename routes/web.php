@@ -4,6 +4,7 @@ use App\Http\Controllers\CarriageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\TrainController;
+use App\Http\Controllers\TrainScheduleController;
 use App\Models\Seat;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,14 @@ Route::controller(CarriageController::class)->group(
         Route::delete('carriages/{carriage}', [CarriageController::class, 'destroy'])->name('trains.carriages.destroy');
     }
 );
+
+Route::controller(TrainScheduleController::class)->group(
+    function () {
+        Route::get('/trains/{train}/trips/create', 'create')->name('trains.trips.create');
+        Route::post('/trains/{train}/trips', 'store')->name('trains.trips.store');
+    }
+);
+
 
 Route::controller(TrainController::class)->group(
     function () {

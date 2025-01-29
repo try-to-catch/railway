@@ -17,20 +17,11 @@ class TrainFactory extends Factory
      */
     public function definition(): array
     {
-        $departureFrom = now()->addWeek()->addDays(rand(1, 7));
-
-        $departure = fake()->dateTimeBetween($departureFrom, $departureFrom->addDays(rand(1, 7)));
-
-        $arrival = fake()->dateTimeBetween($departure, now()->parse($departure)->addHours(rand(10, 50)));
-
         return [
             'name' => fake()->name(),
 
             'from' => fake()->city(),
             'to' => fake()->city(),
-
-            'departure' => $departure,
-            'arrival' => $arrival,
         ];
     }
 }

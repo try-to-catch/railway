@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { Head, useForm } from '@inertiajs/react'
+import {Head, Link, useForm} from '@inertiajs/react'
 import { useState } from 'react'
 
-export default function Index({ seats }) {
+export default function Index({ seats,carriage }) {
     const { data, setData, post, processing } = useForm({
         seats: seats.data
     })
@@ -50,8 +50,26 @@ export default function Index({ seats }) {
                     alignItems: 'center'
                 }}
             >
+                <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                    <Link
+                        href={route('carriages.seats.create', {
+                            carriage: carriage.id
+                        })}
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '5px',
+                            fontSize: '16px'
+                        }}
+                    >
+                        <span style={{marginRight: '5px'}}>+</span> Create
+                        Seat
+                    </Link>
+                </div>
                 {/* Фильтр поиска */}
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{marginBottom: '20px'}}>
                     <input
                         type="text"
                         placeholder="Search by seat number..."
@@ -129,18 +147,18 @@ export default function Index({ seats }) {
                                 color: seat.is_reserved ? '#721c24' : '#155724'
                             }}
                         >
-                            <h3 style={{ marginBottom: '15px' }}>
+                            <h3 style={{marginBottom: '15px'}}>
                                 Seat {seat.number}
                             </h3>
-                            <ul style={{ listStyle: 'none', padding: 0 }}>
-                                <li style={{ marginBottom: '10px' }}>
+                            <ul style={{listStyle: 'none', padding: 0}}>
+                                <li style={{marginBottom: '10px'}}>
                                     <strong>ID:</strong> {seat.id}
                                 </li>
-                                <li style={{ marginBottom: '10px' }}>
+                                <li style={{marginBottom: '10px'}}>
                                     <strong>Reserved:</strong>{' '}
                                     {seat.is_reserved ? 'Yes' : 'No'}
                                 </li>
-                                <li style={{ marginBottom: '10px' }}>
+                                <li style={{marginBottom: '10px'}}>
                                     <strong>Price:</strong> {seat.price}$
                                 </li>
                             </ul>

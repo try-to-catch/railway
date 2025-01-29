@@ -17,7 +17,7 @@ class CarriageController extends Controller
     public function index(Train $train): Response
     {
         return Inertia::render('Carriages/Index', [
-            'carriages' => $train->carriages()->with(self::RELATIONS)->paginate(),
+            'carriages' => $train->carriages()->with(self::RELATIONS)->paginate(100),
             'train' => $train,
         ]);
     }

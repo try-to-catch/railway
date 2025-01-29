@@ -51,12 +51,12 @@ export default function Dashboard({seats}) {
                                         <li style={{marginBottom: '10px'}}>
                                             <strong>To:</strong> {seat.carriage.train.to}
                                         </li>
-                                        <li style={{marginBottom: '10px'}}>
-                                            <strong>Departure:</strong> {seat.carriage.train.departure}
-                                        </li>
-                                        <li style={{marginBottom: '10px'}}>
-                                            <strong>Arrival:</strong> {seat.carriage.train.arrival}
-                                        </li>
+                                        {/*<li style={{marginBottom: '10px'}}>*/}
+                                        {/*    <strong>Departure:</strong> {seat.carriage.train.departure}*/}
+                                        {/*</li>*/}
+                                        {/*<li style={{marginBottom: '10px'}}>*/}
+                                        {/*    <strong>Arrival:</strong> {seat.carriage.train.arrival}*/}
+                                        {/*</li>*/}
                                         <li style={{marginBottom: '10px'}}>
                                             <strong>Price:</strong> {seat.price}$
                                         </li>

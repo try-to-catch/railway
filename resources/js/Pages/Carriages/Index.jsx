@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import {Head, Link} from '@inertiajs/react';
 
 export default function Index({ carriages, train }) {
     return (
@@ -10,10 +10,11 @@ export default function Index({ carriages, train }) {
                     Carriages for Train {train.id}
                 </h2>
 
-               
+
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                    {/* Отображение поездов */}
                     <Link
-                        href={route('trains.edit', { train: train.id })} 
+                        href={route('trains.edit', {train: train.id})}
                         style={{
                             padding: '10px 20px',
                             backgroundColor: '#007bff',
@@ -21,13 +22,29 @@ export default function Index({ carriages, train }) {
                             textDecoration: 'none',
                             borderRadius: '5px',
                             fontSize: '16px',
-                            marginRight: '10px', 
+
                         }}
                     >
                         Edit Train
                     </Link>
 
-                
+                    <Link
+                        href={route('trains.trips.create', {train: train.id})}
+                        style={{
+                            padding: '10px 20px',
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '5px',
+                            fontSize: '16px',
+                            marginRight: '10px',
+                            marginLeft: '10px',
+                        }}
+                    >
+                        Create trip
+                    </Link>
+
+
                     <Link
                         href={`/trains/${train.id}/carriages/create`}
                         style={{
@@ -47,7 +64,7 @@ export default function Index({ carriages, train }) {
                     {carriages.data.map((carriage, index) => (
                         <Link
                             key={index}
-                            href={`/carriages/${carriage.id}/seats`}  
+                            href={`/carriages/${carriage.id}/seats`}
                             style={{
                                 textDecoration: 'none',
                                 backgroundColor: '#f8f9fa',

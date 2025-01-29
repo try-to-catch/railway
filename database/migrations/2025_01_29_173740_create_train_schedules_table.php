@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Train;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trains', static function (Blueprint $table) {
+        Schema::create('train_schedules', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
-
-            $table->string('from');
-            $table->string('to');
+            $table->foreignIdFor(Train::class)->constrained()->cascadeOnDelete();
+            $table->dateTime('departure');
+            $table->dateTime('arrival');
 
             $table->timestamps();
         });
@@ -28,8 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (app()->isLocal()) {
-            Schema::dropIfExists('trains');
-        }
+        Schema::dropIfExists('train_schedules');
     }
 };
