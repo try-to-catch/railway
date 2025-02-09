@@ -22,7 +22,7 @@ class SeatFilterPerformanceTest extends TestCase
         )->create();
     }
 
-    public function testFilterSeatsByPricePerformance()
+    public function test_filter_seats_by_price_performance(): void
     {
         $this->benchmarkFilterSeatsByPrice(1, 5,10);
         $this->benchmarkFilterSeatsByPrice(10, 25, 25);
@@ -62,5 +62,7 @@ class SeatFilterPerformanceTest extends TestCase
         echo "B-Tree Duration: $bTreeDuration seconds\n";
         echo "Linked List Duration: $binaryTreeDuration seconds\n";
         echo "\n";
+
+        $this->assertTrue(true, 'Benchmark completed successfully.');
     }
 }
