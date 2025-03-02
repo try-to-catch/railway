@@ -10,58 +10,68 @@ class TrainQueryBuilder extends Builder
 {
     public function filterSeatsByPriceBTree($minPrice, $maxPrice): self
     {
-        $trains = $this->with(['carriages.seats'])->get();
+        $trains = $this->with(['trainSchedule', 'carriages.seats.ticketPrices'])->get();
 
-        // Create B-tree and insert all seats
         $bTree = new BTree(3); // degree = 3
 
         foreach ($trains as $train) {
             foreach ($train->carriages as $carriage) {
                 foreach ($carriage->seats as $seat) {
-                    $seatData = [
-                        'seat' => $seat,
-                        'carriage' => $carriage,
-                        'train' => $train,
-                    ];
-                    $bTree->insert($seat->price, $seatData);
+                    foreach ($train->trainSchedule as $schedule) {
+                        $ticketPrice = $seat->ticketPrices
+                            ->where('train_schedule_id', $schedule->id)
+                            ->first();
+
+                        if ($ticketPrice) {
+                            $seatData = [
+                                'seat' => $seat,
+                                'carriage' => $carriage,
+                                'train' => $train,
+                                'schedule' => $schedule,
+                                'price' => $ticketPrice->price
+                            ];
+                            $bTree->insert($ticketPrice->price, $seatData);
+                        }
+                    }
                 }
             }
         }
 
-        // Get all seats in the given price range
         $filteredSeats = $bTree->searchRange($minPrice, $maxPrice);
 
-        // Collect train IDs that have seats in the given range
         $trainIds = collect($filteredSeats)
             ->pluck('train.id')
             ->unique()
             ->values()
             ->all();
 
-        // Apply filter by train IDs
+        // Уточняем имя таблицы для колонки id
         return $this->whereIn('trains.id', $trainIds);
     }
 
-    public function filterSeatsByPriceBinaryTree($minPriceBinary, $maxPriceBinary): TrainQueryBuilder
+    public function filterSeatsByPriceBinaryTree($minPrice, $maxPrice): self
     {
-        $trains = $this->with(['carriages.seats'])->get();
+        $trains = $this->with(['trainSchedule', 'carriages.seats.ticketPrices'])->get();
 
-        $filteredTrains = $trains->filter(function ($train) use ($minPriceBinary, $maxPriceBinary) {
+        $filteredTrains = $trains->filter(function ($train) use ($minPrice, $maxPrice) {
             foreach ($train->carriages as $carriage) {
                 foreach ($carriage->seats as $seat) {
-                    if ($seat->price >= $minPriceBinary && $seat->price <= $maxPriceBinary) {
-                        return true;
+                    foreach ($seat->ticketPrices as $ticketPrice) {
+                        if ($ticketPrice->price >= $minPrice && $ticketPrice->price <= $maxPrice) {
+                            return true;
+                        }
                     }
                 }
             }
-
             return false;
         });
 
-        return $this->whereIn('trains.id', $filteredTrains->pluck('trains.id'));
+        $trainIds = $filteredTrains->pluck('id')->toArray();
+        // Уточняем имя таблицы для колонки id
+        return $this->whereIn('trains.id', $trainIds);
     }
 
-    public function filterByRoute($from, $to): TrainQueryBuilder
+    public function filterByRoute($from, $to): self
     {
         if ($from) {
             $this->where('from', 'like', '%'.$from.'%');
@@ -74,52 +84,59 @@ class TrainQueryBuilder extends Builder
         return $this;
     }
 
-    public function filterByDate($date): TrainQueryBuilder
+    public function filterByDate($date): self
     {
-        return $this->whereDate('departure', $date);
+        if ($date) {
+            return $this->whereHas('trainSchedule', function ($query) use ($date) {
+                $query->whereDate('departure', $date);
+            });
+        }
+        return $this;
     }
 
-    public function filterSeatsByPriceLinkedList($minPrice, $maxPrice): \Illuminate\Database\Eloquent\Builder
+    public function filterSeatsByPriceLinkedList($minPrice, $maxPrice): self
     {
-        // Загружаем поезда с вагонами и местами
-        $trains = $this->with(['carriages.seats'])->get();
+        $trains = $this->with(['trainSchedule', 'carriages.seats.ticketPrices'])->get();
 
-        // Создаем связный список поездов
         $trainList = new LinkedList;
         foreach ($trains as $train) {
             $trainList->add($train);
         }
 
-        // Фильтруем поезда через связный список
         $filteredTrains = [];
         $currentTrain = $trainList->getHead();
+
         while ($currentTrain !== null) {
             $train = $currentTrain->data;
 
-            // Создаем связный список вагонов для текущего поезда
             $carriageList = new LinkedList;
             foreach ($train->carriages as $carriage) {
                 $carriageList->add($carriage);
             }
 
-            // Проходим по каждому вагону
             $currentCarriage = $carriageList->getHead();
-            while ($currentCarriage !== null) {
+            $trainHasMatchingSeat = false;
+
+            while ($currentCarriage !== null && !$trainHasMatchingSeat) {
                 $carriage = $currentCarriage->data;
 
-                // Создаем связный список мест
                 $seatList = new LinkedList;
                 foreach ($carriage->seats as $seat) {
                     $seatList->add($seat);
                 }
 
-                // Проходим по всем местам в вагоне
                 $currentSeat = $seatList->getHead();
-                while ($currentSeat !== null) {
-                    if ($currentSeat->data->price >= $minPrice && $currentSeat->data->price <= $maxPrice) {
-                        $filteredTrains[] = $train->id;
-                        break 2; // Выходим из цикла вагонов, если поезд подходит
+                while ($currentSeat !== null && !$trainHasMatchingSeat) {
+                    $seat = $currentSeat->data;
+
+                    foreach ($seat->ticketPrices as $ticketPrice) {
+                        if ($ticketPrice->price >= $minPrice && $ticketPrice->price <= $maxPrice) {
+                            $filteredTrains[] = $train->id;
+                            $trainHasMatchingSeat = true;
+                            break;
+                        }
                     }
+
                     $currentSeat = $currentSeat->next;
                 }
 
@@ -129,39 +146,48 @@ class TrainQueryBuilder extends Builder
             $currentTrain = $currentTrain->next;
         }
 
-        // Возвращаем запрос с отфильтрованными поездами
-        return $this->whereIn('trains.id', $filteredTrains);
+        // Уточняем имя таблицы для колонки id
+        return $this->whereIn('trains.id', array_unique($filteredTrains));
     }
 
-    public function filter(): TrainQueryBuilder
+    public function filter(): self
     {
+        $query = $this;
+
         $minPriceB = request('min_price_b');
         $maxPriceB = request('max_price_b');
 
         if ($minPriceB !== null && $maxPriceB !== null) {
-            $this->filterSeatsByPriceBTree($minPriceB, $maxPriceB);
+            $query = $query->filterSeatsByPriceBTree($minPriceB, $maxPriceB);
         }
 
         $minPriceBinary = request('min_price_binary');
         $maxPriceBinary = request('max_price_binary');
 
         if ($minPriceBinary !== null && $maxPriceBinary !== null) {
-            $this->filterSeatsByPriceLinkedList($minPriceBinary, $maxPriceBinary);
+            $query = $query->filterSeatsByPriceBinaryTree($minPriceBinary, $maxPriceBinary);
+        }
+
+        $minPriceLinked = request('min_price_linked');
+        $maxPriceLinked = request('max_price_linked');
+
+        if ($minPriceLinked !== null && $maxPriceLinked !== null) {
+            $query = $query->filterSeatsByPriceLinkedList($minPriceLinked, $maxPriceLinked);
         }
 
         $from = request('from');
         $to = request('to');
 
         if ($from || $to) {
-            $this->filterByRoute($from, $to);
+            $query = $query->filterByRoute($from, $to);
         }
 
         $date = request('date');
 
         if ($date !== null) {
-            $this->filterByDate($date);
+            $query = $query->filterByDate($date);
         }
 
-        return $this;
+        return $query;
     }
 }
