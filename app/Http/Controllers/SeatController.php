@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Seat\ReserveSeatRequest;
 use App\Http\Requests\Seat\StoreSeatRequest;
 use App\Http\Requests\Seat\UpdateSeatRequest;
 use App\Models\Carriage;
@@ -13,6 +14,8 @@ use Inertia\Response;
 class SeatController extends Controller
 {
     public const relations = ['carriage'];
+
+    public const showRelations = ['carriage.train', 'ticketPrices.trainSchedule'];
 
     public function all(): Response
     {
@@ -61,7 +64,7 @@ class SeatController extends Controller
     public function show(Seat $seat): Response
     {
         return Inertia::render('Seats/Show', [
-            'seat' => $seat->load(self::relations),
+            'seat' => $seat->load(self::showRelations),
         ]);
     }
 
@@ -97,11 +100,27 @@ class SeatController extends Controller
         return redirect()->route('carriages.seats.index', $seat->carriage()->first());
     }
 
-    public function reserve(Seat $seat): void
+    public function reserve(ReserveSeatRequest $request, Seat $seat): RedirectResponse
     {
+        $validated = $request->validated();
+
+        $ticketPrice = $seat->ticketPrices()
+            ->where('train_schedule_id', $validated['train_schedule_id'])
+            ->first();
+
+        if (! $ticketPrice) {
+            session()?->flash('error', 'No price was found for this location or schedule');
+
+            return back();
+        }
+
         $seat->update([
             'reserved_by_id' => auth()->id(),
             'is_reserved' => true,
         ]);
+
+        session()?->flash('message', 'The place has been successfully booked. Cost: '.$ticketPrice->price);
+
+        return redirect()->route('dashboard');
     }
 }

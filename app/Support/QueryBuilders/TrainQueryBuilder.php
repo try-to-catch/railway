@@ -21,7 +21,7 @@ class TrainQueryBuilder extends Builder
                     $seatData = [
                         'seat' => $seat,
                         'carriage' => $carriage,
-                        'train' => $train
+                        'train' => $train,
                     ];
                     $bTree->insert($seat->price, $seatData);
                 }
@@ -63,7 +63,7 @@ class TrainQueryBuilder extends Builder
 
     public function filterByRoute($from, $to): TrainQueryBuilder
     {
-        if ($from ) {
+        if ($from) {
             $this->where('from', 'like', '%'.$from.'%');
         }
 
@@ -85,7 +85,7 @@ class TrainQueryBuilder extends Builder
         $trains = $this->with(['carriages.seats'])->get();
 
         // Создаем связный список поездов
-        $trainList = new LinkedList();
+        $trainList = new LinkedList;
         foreach ($trains as $train) {
             $trainList->add($train);
         }
@@ -97,7 +97,7 @@ class TrainQueryBuilder extends Builder
             $train = $currentTrain->data;
 
             // Создаем связный список вагонов для текущего поезда
-            $carriageList = new LinkedList();
+            $carriageList = new LinkedList;
             foreach ($train->carriages as $carriage) {
                 $carriageList->add($carriage);
             }
@@ -108,7 +108,7 @@ class TrainQueryBuilder extends Builder
                 $carriage = $currentCarriage->data;
 
                 // Создаем связный список мест
-                $seatList = new LinkedList();
+                $seatList = new LinkedList;
                 foreach ($carriage->seats as $seat) {
                     $seatList->add($seat);
                 }

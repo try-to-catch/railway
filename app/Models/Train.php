@@ -43,7 +43,6 @@ class Train extends Model
         return Carbon::parse($attribute)->format('d M | H:i');
     }
 
-
     public function getArrivalAttribute($attribute): string
     {
         return Carbon::parse($attribute)->format('d M | H:i');

@@ -5,6 +5,7 @@ namespace App\Utilities\BTree;
 class BTree
 {
     private $root;
+
     private $t;      // Minimum degree
 
     public function __construct($t)
@@ -45,7 +46,7 @@ class BTree
         }
 
         // If not leaf, move the last t children of child to newNode
-        if (!$child->leaf) {
+        if (! $child->leaf) {
             for ($i = 0; $i < $t; $i++) {
                 $newNode->children[$i] = $child->children[$i + $t];
                 unset($child->children[$i + $t]);
@@ -124,6 +125,7 @@ class BTree
     {
         $result = [];
         $this->searchRangeNode($this->root, $min, $max, $result);
+
         return $result;
     }
 
@@ -135,13 +137,13 @@ class BTree
             $i++;
         }
 
-        if (!$node->leaf) {
+        if (! $node->leaf) {
             $this->searchRangeNode($node->children[$i], $min, $max, $result);
         }
 
         while ($i < count($node->keys) && $node->keys[$i] <= $max) {
             $result[] = $node->values[$i];
-            if (!$node->leaf && $i + 1 < count($node->children)) {
+            if (! $node->leaf && $i + 1 < count($node->children)) {
                 $this->searchRangeNode($node->children[$i + 1], $min, $max, $result);
             }
             $i++;

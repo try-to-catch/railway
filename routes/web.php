@@ -3,6 +3,7 @@
 use App\Http\Controllers\CarriageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeatController;
+use App\Http\Controllers\TicketPriceController;
 use App\Http\Controllers\TrainController;
 use App\Http\Controllers\TrainScheduleController;
 use App\Models\Seat;
@@ -23,7 +24,7 @@ Route::get('/dashboard', static function () {
     return Inertia::render('Dashboard', [
         'seats' => Seat::with('carriage.train')
             ->where('reserved_by_id', auth()->id())
-        ->get(),
+            ->get(),
     ]);
 })->middleware('auth')->name('dashboard');
 
@@ -50,7 +51,9 @@ Route::middleware('auth')->group(function () {
 Route::controller(CarriageController::class)->group(
     function () {
         Route::get('/trains/{train}/carriages', [CarriageController::class, 'index'])->name('trains.carriages.index');
-        Route::get('/trains/{train}/carriages/create', [CarriageController::class, 'create'])->name('trains.carriages.create');
+        Route::get('/trains/{train}/carriages/create', [CarriageController::class, 'create'])->name(
+            'trains.carriages.create'
+        );
         Route::post('/trains/{train}/carriages', [CarriageController::class, 'store'])->name('trains.carriages.store');
         Route::get('carriages/{carriage}', [CarriageController::class, 'show'])->name('trains.carriages.show');
         Route::get('carriages/{carriage}/edit', [CarriageController::class, 'edit'])->name('trains.carriages.edit');
@@ -61,11 +64,12 @@ Route::controller(CarriageController::class)->group(
 
 Route::controller(TrainScheduleController::class)->group(
     function () {
+        Route::get('/trains/{train}/trips', 'index')->name('trains.train-schedules.index');
         Route::get('/trains/{train}/trips/create', 'create')->name('trains.trips.create');
         Route::post('/trains/{train}/trips', 'store')->name('trains.trips.store');
+        Route::get('/train-schedules/{trainSchedule}', 'show')->name('train-schedules.show');
     }
 );
-
 
 Route::controller(TrainController::class)->group(
     function () {
@@ -78,5 +82,20 @@ Route::controller(TrainController::class)->group(
         Route::delete('/trains/{train}', [TrainController::class, 'destroy'])->name('trains.destroy');
     }
 );
+
+Route::controller(TicketPriceController::class)->group(function () {
+    Route::get('/train-schedules/{trainSchedule}/ticket-prices', 'index')
+        ->name('train-schedules.ticket-prices.index');
+    Route::get('/train-schedules/{trainSchedule}/ticket-prices/create', 'create')
+        ->name('train-schedules.ticket-prices.create');
+    Route::post('/train-schedules/{trainSchedule}/ticket-prices', 'store')
+        ->name('train-schedules.ticket-prices.store');
+    Route::get('/ticket-prices/{ticketPrice}/edit', 'edit')
+        ->name('ticket-prices.edit');
+    Route::put('/ticket-prices/{ticketPrice}', 'update')
+        ->name('ticket-prices.update');
+    Route::delete('/ticket-prices/{ticketPrice}', 'destroy')
+        ->name('ticket-prices.destroy');
+});
 
 require __DIR__.'/auth.php';

@@ -24,7 +24,7 @@ class SeatFilterPerformanceTest extends TestCase
 
     public function test_filter_seats_by_price_performance(): void
     {
-        $this->benchmarkFilterSeatsByPrice(1, 5,10);
+        $this->benchmarkFilterSeatsByPrice(1, 5, 10);
         $this->benchmarkFilterSeatsByPrice(10, 25, 25);
         $this->benchmarkFilterSeatsByPrice(100, 50, 50);
     }
