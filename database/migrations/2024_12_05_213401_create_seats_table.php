@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
 
             $table->string('number');
-            $table->unsignedInteger('price');
 
             $table->boolean('is_reserved')->default(false);
             $table->foreignIdFor(User::class, 'reserved_by_id')

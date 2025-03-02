@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Seat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Seat>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketPrice>
  */
-class SeatFactory extends Factory
+class TicketPriceFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class SeatFactory extends Factory
     public function definition(): array
     {
         return [
-            'number' => fake()->numberBetween(1, 100),
-            'is_reserved' => fake()->boolean(),
+            'price' => fake()->numberBetween(10, 1000),
         ];
     }
 }
