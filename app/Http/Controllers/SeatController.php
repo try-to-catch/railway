@@ -29,14 +29,30 @@ class SeatController extends Controller
     public function index(Carriage $carriage): Response
     {
         $search = request('search');
+        $scheduleId = request('schedule_id');
+
+        $seats = $carriage->seats()
+            ->with(self::relations)
+            ->when($scheduleId, function ($query) use ($scheduleId) {
+                return $query->with(['ticketPrices' => function ($query) use ($scheduleId) {
+                    $query->where('train_schedule_id', $scheduleId);
+                }]);
+            })
+            ->where('number', 'like', "%$search%")
+            ->paginate(100);
+
+        // Добавляем цены к местам
+        if ($scheduleId) {
+            $seats->getCollection()->transform(function ($seat) {
+                $seat->price = $seat->ticketPrices->first() ? $seat->ticketPrices->first()->price : null;
+                return $seat;
+            });
+        }
 
         return Inertia::render('Seats/Index', [
-            'seats' => $carriage
-                ->seats()
-                ->with(self::relations)
-                ->where('number', 'like', "%$search%")
-                ->paginate(100),
+            'seats' => $seats,
             'carriage' => $carriage,
+            'schedule_id' => $scheduleId,
         ]);
     }
 
@@ -104,13 +120,16 @@ class SeatController extends Controller
     {
         $validated = $request->validated();
 
+        if (!isset($validated['train_schedule_id'])) {
+            $validated['train_schedule_id'] = request('schedule_id');
+        }
+
         $ticketPrice = $seat->ticketPrices()
             ->where('train_schedule_id', $validated['train_schedule_id'])
             ->first();
 
-        if (! $ticketPrice) {
+        if (!$ticketPrice) {
             session()?->flash('error', 'No price was found for this location or schedule');
-
             return back();
         }
 

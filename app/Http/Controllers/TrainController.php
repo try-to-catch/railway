@@ -18,10 +18,11 @@ class TrainController extends Controller
     public function index(): Response
     {
         return Inertia::render('Trains/Index', [
-            'trains' => Train::query()->with(self::RELATIONS)
-                ->leftJoin('train_schedules', 'trains.id', '=', 'train_schedules.train_id')
+            'trains' => Train::query()
+                ->join('train_schedules', 'trains.id', '=', 'train_schedules.train_id')
+                ->select('trains.*', 'train_schedules.id as schedule_id', 'train_schedules.departure', 'train_schedules.arrival')
                 ->filter()
-                ->paginate(100, ['trains.*', 'train_schedules.departure', 'train_schedules.arrival']),
+                ->paginate(100),
         ]);
     }
 

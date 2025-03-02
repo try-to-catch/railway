@@ -2,9 +2,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import {Head, Link, useForm} from '@inertiajs/react'
 import { useState } from 'react'
 
-export default function Index({ seats,carriage }) {
+export default function Index({ seats, carriage, schedule_id }) {
     const { data, setData, post, processing } = useForm({
-        seats: seats.data
+        seats: seats.data,
+        train_schedule_id: schedule_id
     })
 
     const [searchQuery, setSearchQuery] = useState('')
@@ -19,6 +20,7 @@ export default function Index({ seats,carriage }) {
         setData('seats', updatedSeats)
 
         post(route('seats.reserve', { seat: seatId }), {
+            data: { train_schedule_id: schedule_id },
             onError: () => {
                 const revertedSeats = data.seats.map(seat =>
                     seat.id === seatId ? { ...seat, is_reserved: false } : seat
@@ -179,7 +181,7 @@ export default function Index({ seats,carriage }) {
                                             : 'pointer'
                                     }}
                                 >
-                                    Reserve
+                                    Reserve for {seat.price}
                                 </button>
                             )}
                         </div>

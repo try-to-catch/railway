@@ -143,7 +143,10 @@ export default function Index({ trains }) {
                 {trains.data.map((train, index) => (
                     <Link
                         key={index}
-                        href={route('trains.carriages.index', { train: train.id })}
+                        href={route('trains.carriages.index', {
+                            train: train.id,
+                            schedule_id: train.schedule_id
+                        })}
                         style={{
                             textDecoration: 'none',
                             border: '2px dashed #ccc',

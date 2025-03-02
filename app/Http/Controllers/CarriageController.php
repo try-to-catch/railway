@@ -16,9 +16,12 @@ class CarriageController extends Controller
 
     public function index(Train $train): Response
     {
+        $scheduleId = request('schedule_id');
+
         return Inertia::render('Carriages/Index', [
             'carriages' => $train->carriages()->with(self::RELATIONS)->paginate(100),
             'train' => $train,
+            'schedule_id' => $scheduleId,
         ]);
     }
 

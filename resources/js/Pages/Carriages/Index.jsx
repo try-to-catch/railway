@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, Link} from '@inertiajs/react';
 
-export default function Index({ carriages, train }) {
+export default function Index({ carriages, train, schedule_id }) {
     return (
         <AuthenticatedLayout>
             <Head title="Carriages" />
@@ -10,9 +10,7 @@ export default function Index({ carriages, train }) {
                     Carriages for Train {train.id}
                 </h2>
 
-
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                    {/* Отображение поездов */}
                     <Link
                         href={route('trains.edit', {train: train.id})}
                         style={{
@@ -22,7 +20,6 @@ export default function Index({ carriages, train }) {
                             textDecoration: 'none',
                             borderRadius: '5px',
                             fontSize: '16px',
-
                         }}
                     >
                         Edit Train
@@ -44,7 +41,6 @@ export default function Index({ carriages, train }) {
                         Create trip
                     </Link>
 
-
                     <Link
                         href={`/trains/${train.id}/carriages/create`}
                         style={{
@@ -64,7 +60,10 @@ export default function Index({ carriages, train }) {
                     {carriages.data.map((carriage, index) => (
                         <Link
                             key={index}
-                            href={`/carriages/${carriage.id}/seats`}
+                            href={route('carriages.seats.index', {
+                                carriage: carriage.id,
+                                schedule_id: schedule_id
+                            })}
                             style={{
                                 textDecoration: 'none',
                                 backgroundColor: '#f8f9fa',
