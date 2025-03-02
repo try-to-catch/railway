@@ -14,7 +14,7 @@ export default function Index({ seats, carriage, schedule_id }) {
 
     const handleReserve = seatId => {
         const updatedSeats = data.seats.map(seat =>
-            seat.id === seatId ? { ...seat, is_reserved: true } : seat
+            seat.id === seatId ? { ...seat, is_reserved_for_date: true } : seat
         )
 
         setData('seats', updatedSeats)
@@ -23,10 +23,10 @@ export default function Index({ seats, carriage, schedule_id }) {
             data: { train_schedule_id: schedule_id },
             onError: () => {
                 const revertedSeats = data.seats.map(seat =>
-                    seat.id === seatId ? { ...seat, is_reserved: false } : seat
+                    seat.id === seatId ? { ...seat, is_reserved_for_date: false } : seat
                 )
                 setData('seats', revertedSeats)
-                alert('Failed to reserve the seat. Please try again.')
+                alert('Не удалось забронировать место. Пожалуйста, попробуйте снова.')
             },
         })
     }
@@ -142,30 +142,30 @@ export default function Index({ seats, carriage, schedule_id }) {
                                 padding: '20px',
                                 minWidth: '200px',
                                 textAlign: 'center',
-                                backgroundColor: seat.is_reserved
+                                backgroundColor: seat.is_reserved_for_date
                                     ? '#f8d7da'
                                     : '#d4edda',
                                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                color: seat.is_reserved ? '#721c24' : '#155724'
+                                color: seat.is_reserved_for_date ? '#721c24' : '#155724'
                             }}
                         >
                             <h3 style={{marginBottom: '15px'}}>
-                                Seat {seat.number}
+                                Place {seat.number}
                             </h3>
                             <ul style={{listStyle: 'none', padding: 0}}>
                                 <li style={{marginBottom: '10px'}}>
                                     <strong>ID:</strong> {seat.id}
                                 </li>
                                 <li style={{marginBottom: '10px'}}>
-                                    <strong>Reserved:</strong>{' '}
-                                    {seat.is_reserved ? 'Yes' : 'No'}
+                                    <strong>Booked:</strong>{' '}
+                                    {seat.is_reserved_for_date ? 'Yes' : 'No'}
                                 </li>
                                 <li style={{marginBottom: '10px'}}>
-                                    <strong>Price:</strong> {seat.price}$
+                                    <strong>Cost:</strong> {seat.price}$
                                 </li>
                             </ul>
 
-                            {!seat.is_reserved && (
+                            {!seat.is_reserved_for_date && (
                                 <button
                                     onClick={() => handleReserve(seat.id)}
                                     disabled={processing}
@@ -181,7 +181,7 @@ export default function Index({ seats, carriage, schedule_id }) {
                                             : 'pointer'
                                     }}
                                 >
-                                    Reserve for {seat.price}
+                                    Book by {seat.price}$
                                 </button>
                             )}
                         </div>

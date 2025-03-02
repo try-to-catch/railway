@@ -27,4 +27,9 @@ class TrainSchedule extends Model
     {
         return $this->hasMany(TicketPrice::class);
     }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

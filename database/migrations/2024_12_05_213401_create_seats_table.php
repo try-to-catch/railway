@@ -18,13 +18,6 @@ return new class extends Migration
 
             $table->string('number');
 
-            $table->boolean('is_reserved')->default(false);
-            $table->foreignIdFor(User::class, 'reserved_by_id')
-                ->nullable()
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
             $table->foreignIdFor(Carriage::class)
                 ->constrained()
                 ->cascadeOnDelete()

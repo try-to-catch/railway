@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\CarriageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SeatController;
 use App\Http\Controllers\TicketPriceController;
 use App\Http\Controllers\TrainController;
 use App\Http\Controllers\TrainScheduleController;
-use App\Models\Seat;
+use App\Models\Reservation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -22,9 +23,19 @@ Route::get('/', static function () {
 
 Route::get('/dashboard', static function () {
     return Inertia::render('Dashboard', [
-        'seats' => Seat::with('carriage.train')
-            ->where('reserved_by_id', auth()->id())
-            ->get(),
+        'reservations' => Reservation::with([
+            'seat.carriage.train',
+            'trainSchedule',
+            'seat.ticketPrices'
+        ])
+            ->where('user_id', auth()->id())
+            ->get()
+            ->map(function ($reservation) {
+                $reservation->price = $reservation->seat->ticketPrices
+                    ->where('train_schedule_id', $reservation->train_schedule_id)
+                    ->first()?->price;
+                return $reservation;
+            }),
     ]);
 })->middleware('auth')->name('dashboard');
 
@@ -96,6 +107,11 @@ Route::controller(TicketPriceController::class)->group(function () {
         ->name('ticket-prices.update');
     Route::delete('/ticket-prices/{ticketPrice}', 'destroy')
         ->name('ticket-prices.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::delete('/reservations/{reservation}', [ReservationController::class, 'cancel'])
+        ->name('reservations.cancel');
 });
 
 require __DIR__.'/auth.php';

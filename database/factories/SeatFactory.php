@@ -19,7 +19,6 @@ class SeatFactory extends Factory
     {
         return [
             'number' => fake()->numberBetween(1, 100),
-            'is_reserved' => fake()->boolean(),
         ];
     }
 }

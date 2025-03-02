@@ -6,6 +6,7 @@ use App\Http\Requests\Seat\ReserveSeatRequest;
 use App\Http\Requests\Seat\StoreSeatRequest;
 use App\Http\Requests\Seat\UpdateSeatRequest;
 use App\Models\Carriage;
+use App\Models\Reservation;
 use App\Models\Seat;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -34,17 +35,23 @@ class SeatController extends Controller
         $seats = $carriage->seats()
             ->with(self::relations)
             ->when($scheduleId, function ($query) use ($scheduleId) {
-                return $query->with(['ticketPrices' => function ($query) use ($scheduleId) {
-                    $query->where('train_schedule_id', $scheduleId);
-                }]);
+                return $query->with([
+                    'ticketPrices' => function ($query) use ($scheduleId) {
+                        $query->where('train_schedule_id', $scheduleId);
+                    },
+                    'reservations' => function ($query) use ($scheduleId) {
+                        $query->where('train_schedule_id', $scheduleId)->with('user');
+                    }
+                ]);
             })
             ->where('number', 'like', "%$search%")
             ->paginate(100);
 
-        // Добавляем цены к местам
         if ($scheduleId) {
             $seats->getCollection()->transform(function ($seat) {
                 $seat->price = $seat->ticketPrices->first() ? $seat->ticketPrices->first()->price : null;
+                $seat->is_reserved_for_date = $seat->reservations->isNotEmpty();
+                $seat->reserved_by_for_date = $seat->reservations->first()?->user;
                 return $seat;
             });
         }
@@ -120,8 +127,13 @@ class SeatController extends Controller
     {
         $validated = $request->validated();
 
-        if (!isset($validated['train_schedule_id'])) {
-            $validated['train_schedule_id'] = request('schedule_id');
+        $isAlreadyReserved = Reservation::query()->where('seat_id', $seat->id)
+            ->where('train_schedule_id', $validated['train_schedule_id'])
+            ->exists();
+
+        if ($isAlreadyReserved) {
+            session()?->flash('error', 'Место уже забронировано на эту дату');
+            return back();
         }
 
         $ticketPrice = $seat->ticketPrices()
@@ -129,16 +141,17 @@ class SeatController extends Controller
             ->first();
 
         if (!$ticketPrice) {
-            session()?->flash('error', 'No price was found for this location or schedule');
+            session()?->flash('error', 'Цена для данного места и расписания не найдена');
             return back();
         }
 
-        $seat->update([
-            'reserved_by_id' => auth()->id(),
-            'is_reserved' => true,
+        Reservation::query()->create([
+            'user_id' => auth()->id(),
+            'seat_id' => $seat->id,
+            'train_schedule_id' => $validated['train_schedule_id'],
         ]);
 
-        session()?->flash('message', 'The place has been successfully booked. Cost: '.$ticketPrice->price);
+        session()?->flash('message', "Место успешно забронировано. Стоимость: {$ticketPrice->price}");
 
         return redirect()->route('dashboard');
     }
