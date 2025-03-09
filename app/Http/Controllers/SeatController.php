@@ -65,9 +65,13 @@ class SeatController extends Controller
 
     public function create(Carriage $carriage): Response
     {
+        $trainSchedules = $carriage->train->trainSchedule;
+
         return Inertia::render('Seats/Create', [
             'carriages' => Carriage::all(),
             'carriage' => $carriage,
+            'trainSchedules' => $trainSchedules,
+            'schedule_id' => request('schedule_id'),
         ]);
     }
 
@@ -75,11 +79,28 @@ class SeatController extends Controller
      */
     public function store(StoreSeatRequest $request, Carriage $carriage): RedirectResponse
     {
-        $carriage->seats()->create($request->validated());
+        $validated = $request->validated();
 
-        session()?->flash('message', 'Seat created successfully!');
+        $seat = $carriage->seats()->create([
+            'number' => $validated['number'],
+            'is_reserved' => $validated['is_reserved'] ?? false,
+        ]);
 
-        return redirect()->route('carriages.seats.index', $carriage);
+        if (!empty($validated['train_schedule_id']) && !empty($validated['price'])) {
+            $seat->ticketPrices()->create([
+                'train_schedule_id' => $validated['train_schedule_id'],
+                'price' => $validated['price'],
+            ]);
+
+            session()?->flash('message', 'Место успешно создано с указанной ценой!');
+        } else {
+            session()?->flash('message', 'Место создано успешно!');
+        }
+
+        return redirect()->route('carriages.seats.index', [
+            'carriage' => $carriage->id,
+            'schedule_id' => $validated['train_schedule_id'] ?? null
+        ]);
     }
 
     /* Display the specified resource.

@@ -6,6 +6,8 @@ export default function Show({ train }) {
         name: train.name || '',
         from: train.from || '',
         to: train.to || '',
+        departure: train.trainSchedule?.departure || '',
+        arrival: train.trainSchedule?.arrival || '',
     });
 
     const handleSubmit = (e) => {
@@ -40,7 +42,7 @@ export default function Show({ train }) {
                 </h2>
 
                 <form onSubmit={handleSubmit}>
-                    {/* Train Name */}
+                    {/* Существующие поля */}
                     <div style={{ marginBottom: '15px' }}>
                         <label
                             htmlFor="trainName"
@@ -68,7 +70,6 @@ export default function Show({ train }) {
                         )}
                     </div>
 
-                    {/* From */}
                     <div style={{ marginBottom: '15px' }}>
                         <label
                             htmlFor="from"
@@ -96,7 +97,6 @@ export default function Show({ train }) {
                         )}
                     </div>
 
-                    {/* To */}
                     <div style={{ marginBottom: '15px' }}>
                         <label
                             htmlFor="to"
@@ -124,7 +124,61 @@ export default function Show({ train }) {
                         )}
                     </div>
 
-                    {/* Submit Button */}
+                    {/* Добавленные поля для расписания */}
+                    <div style={{ marginBottom: '15px' }}>
+                        <label
+                            htmlFor="departure"
+                            style={{ display: 'block', marginBottom: '5px' }}
+                        >
+                            Departure Time:
+                        </label>
+                        <input
+                            type="datetime-local"
+                            id="departure"
+                            value={data.departure}
+                            onChange={(e) => setData('departure', e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc',
+                            }}
+                            required
+                        />
+                        {errors.departure && (
+                            <div style={{ color: 'red', marginTop: '5px' }}>
+                                {errors.departure}
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                        <label
+                            htmlFor="arrival"
+                            style={{ display: 'block', marginBottom: '5px' }}
+                        >
+                            Arrival Time:
+                        </label>
+                        <input
+                            type="datetime-local"
+                            id="arrival"
+                            value={data.arrival}
+                            onChange={(e) => setData('arrival', e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc',
+                            }}
+                            required
+                        />
+                        {errors.arrival && (
+                            <div style={{ color: 'red', marginTop: '5px' }}>
+                                {errors.arrival}
+                            </div>
+                        )}
+                    </div>
+
                     <button
                         type="submit"
                         disabled={processing}

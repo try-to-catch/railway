@@ -6,6 +6,8 @@ export default function CreateTrain() {
         name: '',
         from: '',
         to: '',
+        departure: '',
+        arrival: '',
     });
 
     const handleSubmit = (e) => {
@@ -120,6 +122,62 @@ export default function CreateTrain() {
                         {errors.to && (
                             <div style={{ color: 'red', marginTop: '5px' }}>
                                 {errors.to}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Departure Time */}
+                    <div style={{ marginBottom: '15px' }}>
+                        <label
+                            htmlFor="departure"
+                            style={{ display: 'block', marginBottom: '5px' }}
+                        >
+                            Departure Time:
+                        </label>
+                        <input
+                            type="datetime-local"
+                            id="departure"
+                            value={data.departure}
+                            onChange={(e) => setData('departure', e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc',
+                            }}
+                            required
+                        />
+                        {errors.departure && (
+                            <div style={{ color: 'red', marginTop: '5px' }}>
+                                {errors.departure}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Arrival Time */}
+                    <div style={{ marginBottom: '15px' }}>
+                        <label
+                            htmlFor="arrival"
+                            style={{ display: 'block', marginBottom: '5px' }}
+                        >
+                            Arrival Time:
+                        </label>
+                        <input
+                            type="datetime-local"
+                            id="arrival"
+                            value={data.arrival}
+                            onChange={(e) => setData('arrival', e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc',
+                            }}
+                            required
+                        />
+                        {errors.arrival && (
+                            <div style={{ color: 'red', marginTop: '5px' }}>
+                                {errors.arrival}
                             </div>
                         )}
                     </div>

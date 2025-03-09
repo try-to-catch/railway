@@ -1,47 +1,43 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function CreateSeat({ carriages,carriage }) {
+export default function CreateSeat({ carriages, carriage, trainSchedules, schedule_id }) {
     const { data, setData, post, processing, errors } = useForm({
         number: '',
         is_reserved: false,
+        price: '',
+        train_schedule_id: schedule_id || (trainSchedules && trainSchedules.length > 0 ? trainSchedules[0].id : ''),
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('carriages.seats.store', { carriage: carriage.id }), {
             onSuccess: () => {
-                alert('Seat created successfully!');
+                alert('Место успешно создано!');
             },
             onError: () => {
-                alert('Failed to create seat. Please check the input.');
+                alert('Ошибка при создании места. Проверьте введенные данные.');
             },
         });
     };
 
     return (
         <AuthenticatedLayout>
-            <Head title="Create Seat" />
+            <Head title="Создание места" />
 
-            <div
-                style={{
-                    maxWidth: '600px',
-                    margin: '20px auto',
-                    padding: '20px',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    backgroundColor: '#f8f9fa',
-                }}
-            >
-                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Create Seat</h2>
+            <div style={{
+                maxWidth: '600px',
+                margin: '20px auto',
+                padding: '20px',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#f8f9fa',
+            }}>
+                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Создание места</h2>
                 <form onSubmit={handleSubmit}>
-
                     <div style={{ marginBottom: '15px' }}>
-                        <label
-                            htmlFor="seatNumber"
-                            style={{ display: 'block', marginBottom: '5px' }}
-                        >
-                            Seat Number:
+                        <label htmlFor="seatNumber" style={{ display: 'block', marginBottom: '5px' }}>
+                            Seat number:
                         </label>
                         <input
                             type="text"
@@ -63,11 +59,39 @@ export default function CreateSeat({ carriages,carriage }) {
                         )}
                     </div>
 
+                    {/* Выбор расписания */}
                     <div style={{ marginBottom: '15px' }}>
-                        <label
-                            htmlFor="seatNumber"
-                            style={{ display: 'block', marginBottom: '5px' }}
+                        <label htmlFor="schedule" style={{ display: 'block', marginBottom: '5px' }}>
+                            Schedule:
+                        </label>
+                        <select
+                            id="schedule"
+                            value={data.train_schedule_id}
+                            onChange={(e) => setData('train_schedule_id', e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc',
+                            }}
+                            required
                         >
+                            <option value="">Выберите расписание</option>
+                            {trainSchedules && trainSchedules.map((schedule) => (
+                                <option key={schedule.id} value={schedule.id}>
+                                    {new Date(schedule.departure).toLocaleString()} - {new Date(schedule.arrival).toLocaleString()}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.train_schedule_id && (
+                            <div style={{ color: 'red', marginTop: '5px' }}>
+                                {errors.train_schedule_id}
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{ marginBottom: '15px' }}>
+                        <label htmlFor="price" style={{ display: 'block', marginBottom: '5px' }}>
                             Price:
                         </label>
                         <input
@@ -90,10 +114,9 @@ export default function CreateSeat({ carriages,carriage }) {
                         )}
                     </div>
 
-                    {/* Reserved Checkbox */}
                     <div style={{ marginBottom: '15px' }}>
                         <label style={{ display: 'block', marginBottom: '5px' }}>
-                            Is Reserved:
+                            Reserved:
                         </label>
                         <input
                             type="checkbox"
@@ -107,6 +130,7 @@ export default function CreateSeat({ carriages,carriage }) {
                             </div>
                         )}
                     </div>
+
                     <button
                         type="submit"
                         disabled={processing}
@@ -121,7 +145,7 @@ export default function CreateSeat({ carriages,carriage }) {
                             cursor: processing ? 'not-allowed' : 'pointer',
                         }}
                     >
-                        {processing ? 'Creating...' : 'Create Seat'}
+                        {processing ? 'Создание...' : 'Создать место'}
                     </button>
                 </form>
             </div>

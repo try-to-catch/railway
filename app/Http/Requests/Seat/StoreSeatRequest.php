@@ -14,10 +14,10 @@ class StoreSeatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'number' => ['required', 'string'],
-            'price' => ['required', 'integer'],
-            'is_reserved' => ['required', 'boolean'],
-            'reserved_by_id' => ['nullable', 'integer'],
+            'number' => ['required', 'string', 'max:255'],
+            'is_reserved' => ['nullable', 'boolean'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'train_schedule_id' => ['required', 'integer', 'exists:train_schedules,id'],
         ];
     }
 }

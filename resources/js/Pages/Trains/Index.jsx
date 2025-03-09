@@ -141,31 +141,56 @@ export default function Index({ trains }) {
                 }}
             >
                 {trains.data.map((train, index) => (
-                    <Link
+                    <div
                         key={index}
-                        href={route('trains.carriages.index', {
-                            train: train.id,
-                            schedule_id: train.schedule_id
-                        })}
                         style={{
-                            textDecoration: 'none',
                             border: '2px dashed #ccc',
                             borderRadius: '8px',
                             padding: '15px',
                             minWidth: '200px',
                             textAlign: 'center',
                             backgroundColor: '#f8f9fa',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
-                        <h3 style={{ marginBottom: '10px' }}>Train {train.name}</h3>
-                        <ul style={{ listStyle: 'none', padding: 0, lineHeight: '1.6' }}>
-                            <li><strong>ID:</strong> {train.id}</li>
-                            <li><strong>From:</strong> {train.from}</li>
-                            <li><strong>To:</strong> {train.to}</li>
-                            <li><strong>Departure:</strong> {train.departure}</li>
-                            <li><strong>Arrival:</strong> {train.arrival}</li>
-                        </ul>
-                    </Link>
+                        <Link
+                            href={route('trains.carriages.index', {
+                                train: train.id,
+                                schedule_id: train.schedule_id
+                            })}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit',
+                                marginBottom: '10px',
+                                flex: 1,
+                            }}
+                        >
+                            <h3 style={{ marginBottom: '10px' }}>Train {train.name}</h3>
+                            <ul style={{ listStyle: 'none', padding: 0, lineHeight: '1.6' }}>
+                                <li><strong>ID:</strong> {train.id}</li>
+                                <li><strong>From:</strong> {train.from}</li>
+                                <li><strong>To:</strong> {train.to}</li>
+                                <li><strong>Departure:</strong> {train.departure}</li>
+                                <li><strong>Arrival:</strong> {train.arrival}</li>
+                            </ul>
+                        </Link>
+                        <Link
+                            href={route('trains.edit', { train: train.id })}
+                            style={{
+                                padding: '5px 10px',
+                                backgroundColor: '#6c757d',
+                                color: 'white',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                display: 'inline-block',
+                                marginTop: '10px',
+                            }}
+                        >
+                            Edit train
+                        </Link>
+                    </div>
                 ))}
             </div>
         </AuthenticatedLayout>
