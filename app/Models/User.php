@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reservation::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->email, config('admins.emails', []), true);
+    }
 }
